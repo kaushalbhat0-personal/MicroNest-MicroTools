@@ -23,10 +23,10 @@ export default async function AppPage() {
   const matterSummary = await getMatterDashboardSummary();
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-6">
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">NoticeFlow</h1>
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
           <p className="text-sm text-muted-foreground">Firm: {firm?.name} — {firm?.slug}</p>
         </div>
         <Badge>{firm?.status}</Badge>
@@ -43,22 +43,23 @@ export default async function AppPage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">MatterVault</h2>
-        <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
-          <div className="rounded-md border p-3">
-            <p className="text-muted-foreground">Open matters</p>
-            <p className="text-xl font-semibold">{matterSummary.openMatters}</p>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="rounded-md border p-4">
+            <p className="text-sm text-muted-foreground">Open matters</p>
+            <p className="text-2xl font-semibold">{matterSummary.openMatters}</p>
           </div>
-          <div className="rounded-md border p-3">
-            <p className="text-muted-foreground">Awaiting documents</p>
-            <p className="text-xl font-semibold">{matterSummary.awaitingDocuments}</p>
+          <div className="rounded-md border p-4">
+            <p className="text-sm text-muted-foreground">Awaiting documents</p>
+            <p className="text-2xl font-semibold">{matterSummary.awaitingDocuments}</p>
           </div>
-          <div className="rounded-md border p-3">
-            <p className="text-muted-foreground">Ready</p>
-            <p className="text-xl font-semibold">{matterSummary.readyMatters}</p>
+          <div className={`rounded-md border p-4 ${matterSummary.readyMatters > 0 ? "border-green-200 bg-green-50 dark:bg-green-950/20" : ""}`}>
+            <p className="text-sm text-muted-foreground">Ready</p>
+            <p className="text-2xl font-semibold">{matterSummary.readyMatters}</p>
           </div>
-          <div className="rounded-md border p-3">
-            <p className="text-muted-foreground">Overdue</p>
-            <p className="text-xl font-semibold">{matterSummary.overdueMatters}</p>
+          <div className={`rounded-md border p-4 ${matterSummary.overdueMatters > 0 ? "border-red-200 bg-red-50 dark:bg-red-950/20" : ""}`}>
+            <p className="text-sm text-muted-foreground">Overdue</p>
+            <p className="text-2xl font-semibold">{matterSummary.overdueMatters}</p>
+            {matterSummary.overdueMatters > 0 && <p className="text-xs text-red-700 dark:text-red-300">Needs action</p>}
           </div>
         </div>
         <Link href="/app/matters" className="inline-flex rounded-md border px-3 py-1 text-sm">View matters</Link>

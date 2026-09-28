@@ -26,6 +26,7 @@ import {
 } from "@/modules/matter/permissions/matter-permissions";
 import { canTransitionMatter } from "@/modules/matter/permissions/matter-status";
 import { ArchiveMatterButton } from "@/modules/matter/components/archive-matter-button";
+import { PageHeader } from "@/components/layout/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,20 @@ export default async function MatterDetailPage({ params }: { params: Promise<{ m
   const members = firm ? await listMembersByFirm(supabase, firm.id) : [];
   void members;
   const role = firm ? await getMembershipRole(firm.id) : null;
+
+  // Human-readable assigned name — local map, not generic abstraction
+  let assignedDisplay = "Unassigned";
+  if (matter.assigned_to) {
+    try {
+      const { createServiceSupabaseClient } = await import("@/infrastructure/database/supabase-service");
+      const svc = createServiceSupabaseClient();
+      const { data: u } = await svc.from("users").select("name, email").eq("id", matter.assigned_to).maybeSingle();
+      if (u) assignedDisplay = (u as { name: string | null; email: string }).name?.trim() ? (u as { name: string | null }).name! : (u as { email: string }).email;
+      else assignedDisplay = matter.assigned_to.slice(0, 8);
+    } catch {
+      assignedDisplay = matter.assigned_to.slice(0, 8);
+    }
+  }
   const checklist = await listChecklistByMatter(supabase, matter.id);
   const documents = await listDocumentsByMatter(supabase, matter.id);
   const notes = await listNotesByMatter(supabase, matter.id);
@@ -51,54 +66,91 @@ export default async function MatterDetailPage({ params }: { params: Promise<{ m
   const canNote = canCreateMatterNote(role as never, user?.id ?? null, matter.assigned_to);
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{matter.title}</h1>
-        <Badge>{matter.status}</Badge>
-      </div>
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <div className="mx-auto max-w-3xl space-y-6">
+      <PageHeader
+        title={matter.title}
+        description={`${client?.name ?? matter.client_id} • ${matter.matter_type}`}
+        backHref="/app/matters"
+        backLabel="Back to matters"
+        action={
+          <div className="flex items-center gap-2">
+            <Badge>{matter.status}</Badge>
+            {canEdit && (
+              <Link href={`/app/matters/${matter.id}/edit`} className="inline-flex rounded-md border px-3 py-1 text-sm">
+                Edit
+              </Link>
+            )}
+            {canArchive && <ArchiveMatterButton matterId={matter.id} />}
+          </div>
+        }
+      />
 
-      <div className="grid grid-cols-2 gap-4 rounded-md border p-4 text-sm">
-        <div>
-          <p className="text-muted-foreground">Client</p>
-          <p>{client?.name ?? matter.client_id}</p>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="rounded-md border p-4 space-y-3">
+          <h3 className="text-sm font-medium">Details</h3>
+          <div className="space-y-2 text-sm">
+            <div>
+              <p className="text-muted-foreground">Client</p>
+              <p>{client?.name ?? matter.client_id}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Matter Type</p>
+              <p>{matter.matter_type}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Assigned</p>
+              <p className="text-sm">{assignedDisplay}</p>
+            </div>
+          </div>
         </div>
-        <div>
-          <p className="text-muted-foreground">Matter Type</p>
-          <p>{matter.matter_type}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Assigned</p>
-          <p className="font-mono text-xs">{matter.assigned_to ?? "Unassigned"}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Deadline</p>
-          <p>{matter.deadline ?? "—"}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Next action</p>
-          <p>{matter.next_action ?? "—"}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground">Next action date</p>
-          <p>{matter.next_action_date ?? "—"}</p>
+        <div className="rounded-md border p-4 space-y-3">
+          <h3 className="text-sm font-medium">Schedule</h3>
+          <div className="space-y-2 text-sm">
+            <div>
+              <p className="text-muted-foreground">Deadline</p>
+              <p>
+                {matter.deadline ?? "—"}{" "}
+                {matter.deadline && (
+                  <span className={`text-xs font-medium ${(() => {
+                    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+                    const d = new Date(matter.deadline! + "T00:00:00");
+                    const t = new Date(today + "T00:00:00");
+                    const diff = Math.round((d.getTime() - t.getTime()) / 86400000);
+                    if (diff < 0) return "text-red-600";
+                    if (diff === 0) return "text-amber-600";
+                    if (diff <= 7) return "text-amber-600";
+                    return "text-muted-foreground";
+                  })()}`}>
+                    {(() => {
+                      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+                      const d = new Date(matter.deadline! + "T00:00:00");
+                      const t = new Date(today + "T00:00:00");
+                      const diff = Math.round((d.getTime() - t.getTime()) / 86400000);
+                      if (diff < 0) return `OVERDUE · ${Math.abs(diff)} days late`;
+                      if (diff === 0) return "DUE TODAY";
+                      if (diff <= 7) return `DUE IN ${diff} DAYS`;
+                      return "";
+                    })()}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Next action</p>
+              <p>{matter.next_action ?? "—"}</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Next action date</p>
+              <p>{matter.next_action_date ?? "—"}</p>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="flex gap-2">
-        {canEdit && (
-          <Link href={`/app/matters/${matter.id}/edit`} className="inline-flex rounded-md border px-3 py-1 text-sm">
-            Edit
-          </Link>
-        )}
-        {canArchive && <ArchiveMatterButton matterId={matter.id} />}
-      </div>
-      <Link href="/app/matters" className="text-sm text-muted-foreground underline">
-        ← Back to matters
-      </Link>
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Checklist</h2>
-        <Checklist items={checklist} canVerify={canVerifyChecklist(role as never)} />
+        <Checklist items={checklist} canVerify={canVerifyChecklist(role as never)} canUpload={canUpload} matterId={matter.id} />
       </section>
 
       <section className="space-y-3">
@@ -137,6 +189,7 @@ export default async function MatterDetailPage({ params }: { params: Promise<{ m
         <h2 className="text-lg font-semibold">Activity</h2>
         <MatterActivityTimeline activities={activities} />
       </section>
+      </div>
     </main>
   );
 }

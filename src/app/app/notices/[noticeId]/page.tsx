@@ -35,13 +35,14 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ n
   const notes = await listNotesByNotice(supabase, notice.id);
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-6">
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <div className="mx-auto max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Notice {notice.reference_number ?? notice.id.slice(0, 8)}</h1>
         <Badge>{notice.status}</Badge>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 rounded-md border p-4 text-sm">
+      <div className="grid grid-cols-1 gap-4 rounded-md border p-4 text-sm md:grid-cols-2">
         <div>
           <p className="text-muted-foreground">Client</p>
           <p>{client?.name ?? notice.client_id}</p>
@@ -126,6 +127,7 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ n
         <NotesList notes={notes} currentUserId={user?.id ?? null} currentRole={role} noticeAssignedTo={notice.assigned_to} />
         <NoteForm noticeId={notice.id} />
       </section>
+      </div>
     </main>
   );
 }

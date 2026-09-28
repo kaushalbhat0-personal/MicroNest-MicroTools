@@ -8,6 +8,7 @@ import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-fi
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
 import type { Client } from "@/modules/client/types/client-types";
+import { PageHeader } from "@/components/layout/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -41,13 +42,15 @@ export default async function NoticesPage({ searchParams }: { searchParams: Prom
   };
 
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Notices</h1>
-        <Link href="/app/notices/new" className="rounded-md border px-3 py-1 text-sm">
-          New notice
-        </Link>
-      </div>
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <PageHeader
+        title="Notices"
+        action={
+          <Link href="/app/notices/new" className="rounded-md border px-3 py-1 text-sm">
+            New notice
+          </Link>
+        }
+      />
       <NoticeFilters
         q={filters.q}
         status={filters.status}

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { FirmMember } from "@/modules/firm/types/firm-types";
 
 export function NoticeFilters({
@@ -18,15 +20,16 @@ export function NoticeFilters({
   deadline?: string;
   members: FirmMember[];
 }) {
+  const hasActive = !!(q || status || priority || authority || assigned || deadline);
   return (
-    <form method="GET" className="grid grid-cols-2 gap-3 rounded-md border p-3 md:grid-cols-3">
-      <div className="col-span-2 md:col-span-3">
-        <label className="text-xs">Search (reference / client)</label>
-        <input name="q" defaultValue={q} placeholder="ABC Pvt Ltd or REF123" className="w-full rounded-md border px-3 py-2 text-sm" />
+    <form method="GET" className="grid grid-cols-1 gap-3 rounded-md border p-3 sm:grid-cols-2 md:grid-cols-3">
+      <div className="col-span-1 sm:col-span-2 md:col-span-3">
+        <label htmlFor="filter-q" className="text-xs">Search (reference / client)</label>
+        <Input id="filter-q" name="q" defaultValue={q} placeholder="ABC Pvt Ltd or REF123" />
       </div>
       <div>
-        <label className="text-xs">Status</label>
-        <select name="status" defaultValue={status ?? ""} className="w-full rounded-md border px-2 py-2 text-sm">
+        <label htmlFor="filter-status" className="text-xs">Status</label>
+        <Select id="filter-status" name="status" defaultValue={status ?? ""}>
           <option value="">All</option>
           <option value="received">received</option>
           <option value="review">review</option>
@@ -38,31 +41,31 @@ export function NoticeFilters({
           <option value="submitted">submitted</option>
           <option value="follow_up">follow_up</option>
           <option value="closed">closed</option>
-        </select>
+        </Select>
       </div>
       <div>
-        <label className="text-xs">Priority</label>
-        <select name="priority" defaultValue={priority ?? ""} className="w-full rounded-md border px-2 py-2 text-sm">
+        <label htmlFor="filter-priority" className="text-xs">Priority</label>
+        <Select id="filter-priority" name="priority" defaultValue={priority ?? ""}>
           <option value="">All</option>
           <option value="low">low</option>
           <option value="medium">medium</option>
           <option value="high">high</option>
           <option value="urgent">urgent</option>
-        </select>
+        </Select>
       </div>
       <div>
-        <label className="text-xs">Authority</label>
-        <select name="authority" defaultValue={authority ?? ""} className="w-full rounded-md border px-2 py-2 text-sm">
+        <label htmlFor="filter-authority" className="text-xs">Authority</label>
+        <Select id="filter-authority" name="authority" defaultValue={authority ?? ""}>
           <option value="">All</option>
           <option value="income_tax">income_tax</option>
           <option value="gst">gst</option>
           <option value="tds">tds</option>
           <option value="other">other</option>
-        </select>
+        </Select>
       </div>
       <div>
-        <label className="text-xs">Assigned</label>
-        <select name="assigned" defaultValue={assigned ?? ""} className="w-full rounded-md border px-2 py-2 text-sm">
+        <label htmlFor="filter-assigned" className="text-xs">Assigned</label>
+        <Select id="filter-assigned" name="assigned" defaultValue={assigned ?? ""}>
           <option value="">All</option>
           <option value="my">My Notices</option>
           <option value="unassigned">Unassigned</option>
@@ -71,24 +74,31 @@ export function NoticeFilters({
               {m.user_id.slice(0, 8)} — {m.role}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
       <div>
-        <label className="text-xs">Deadline</label>
-        <select name="deadline" defaultValue={deadline ?? ""} className="w-full rounded-md border px-2 py-2 text-sm">
+        <label htmlFor="filter-deadline" className="text-xs">Deadline</label>
+        <Select id="filter-deadline" name="deadline" defaultValue={deadline ?? ""}>
           <option value="">All</option>
           <option value="overdue">Overdue</option>
           <option value="today">Due today</option>
           <option value="due_7">Due in 7 days</option>
-        </select>
+        </Select>
       </div>
-      <div className="col-span-2 flex items-end gap-2 md:col-span-3">
+      <div className="col-span-1 flex items-end gap-2 sm:col-span-2 md:col-span-3">
         <button type="submit" className="rounded-md border px-4 py-2 text-sm">
           Apply
         </button>
-        <Link href="/app/notices" className="rounded-md border px-4 py-2 text-sm">
-          Clear
-        </Link>
+        {hasActive && (
+          <Link href="/app/notices" className="rounded-md border px-4 py-2 text-sm">
+            Clear filters
+          </Link>
+        )}
+        {!hasActive && (
+          <Link href="/app/notices" className="rounded-md border px-4 py-2 text-sm opacity-50">
+            Clear
+          </Link>
+        )}
       </div>
     </form>
   );

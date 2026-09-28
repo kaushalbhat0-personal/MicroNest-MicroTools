@@ -13,9 +13,11 @@ export default async function NewMatterPage() {
   const members = firm ? await listMembersByFirm(supabase, firm.id) : [];
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">New matter</h1>
-      <MatterForm clients={clients} members={members} mode="create" />
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <h1 className="text-2xl font-semibold">New matter</h1>
+        <MatterForm clients={clients} members={members} mode="create" />
+      </div>
     </main>
   );
 }

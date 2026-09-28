@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import type { MatterNote } from "../types/matter-note-types";
 import { updateMatterNoteAction, deleteMatterNoteAction } from "../actions/matter-notes";
 import { canEditMatterNote, canDeleteMatterNote } from "../permissions/matter-permissions";
@@ -52,12 +53,11 @@ function NoteRow({
         <form action={editAction} className="space-y-2" onSubmit={() => setTimeout(() => setEditing(false), 500)}>
           <input type="hidden" name="noteId" value={note.id} />
           <label htmlFor={`note-${note.id}`} className="text-sm font-medium">Edit note</label>
-          <textarea
+          <Textarea
             id={`note-${note.id}`}
             name="content"
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            className="w-full rounded-md border px-3 py-2 text-sm"
             rows={3}
             maxLength={5000}
             aria-describedby={`note-${note.id}-error`}

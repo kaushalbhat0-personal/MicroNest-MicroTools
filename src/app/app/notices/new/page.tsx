@@ -14,9 +14,11 @@ export default async function NewNoticePage() {
   const members = firm ? await listMembersByFirm(supabase, firm.id) : [];
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6 p-6">
-      <h1 className="text-2xl font-semibold">New notice</h1>
-      <NoticeForm action={createNoticeAction} clients={clients} members={members} submitLabel="Create" />
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <h1 className="text-2xl font-semibold">New notice</h1>
+        <NoticeForm action={createNoticeAction} clients={clients} members={members} submitLabel="Create" />
+      </div>
     </main>
   );
 }

@@ -6,6 +6,7 @@ import type { Client } from "@/modules/client/types/client-types";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { getMembershipRole } from "@/modules/firm/permissions/get-membership";
 import { canCreateMatter } from "@/modules/matter/permissions/matter-permissions";
+import { PageHeader } from "@/components/layout/page-header";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,25 @@ export default async function MattersPage({
   const { firm } = await getCurrentFirmForSession();
   const role = firm ? await getMembershipRole(firm.id) : null;
   const canCreate = canCreateMatter(role as never);
+
+  // Build member display map (human-readable) — local, not generic abstraction
+  const membersMap = new Map<string, string>();
+  if (firm) {
+    const { createServerSupabaseClient } = await import("@/infrastructure/database/supabase-server");
+    const supabase2 = await createServerSupabaseClient();
+    const { data: members } = await supabase2.from("firm_members").select("user_id").eq("firm_id", firm.id);
+    const ids = (members ?? []).map((m: { user_id: string }) => m.user_id);
+    if (ids.length > 0) {
+      try {
+        const { createServiceSupabaseClient } = await import("@/infrastructure/database/supabase-service");
+        const svc = createServiceSupabaseClient();
+        const { data: users } = await svc.from("users").select("id, name, email").in("id", ids);
+        for (const u of (users ?? []) as { id: string; name: string | null; email: string }[]) {
+          membersMap.set(u.id, u.name?.trim() ? u.name! : u.email);
+        }
+      } catch {}
+    }
+  }
 
   const readinessMap = new Map<string, { requiredCount: number; verifiedCount: number }>();
   if (matters.length > 0 && firm) {
@@ -52,15 +72,17 @@ export default async function MattersPage({
   }
 
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Matters</h1>
-        {canCreate && (
-          <Link href="/app/matters/new" className="rounded-md border px-3 py-1 text-sm">
-            New matter
-          </Link>
-        )}
-      </div>
+    <main className="mx-auto max-w-5xl space-y-6 p-6">
+      <PageHeader
+        title="Matters"
+        action={
+          canCreate ? (
+            <Link href="/app/matters/new" className="rounded-md border px-3 py-1 text-sm">
+              New matter
+            </Link>
+          ) : undefined
+        }
+      />
       <div className="flex gap-2 text-sm">
         <Link href={hrefFor(undefined)} className={`rounded-md border px-3 py-1 ${!statusFilter ? "bg-foreground text-background" : ""}`}>
           All
@@ -75,7 +97,7 @@ export default async function MattersPage({
           Archived
         </Link>
       </div>
-      <MattersTable matters={matters} clientsMap={map} readinessMap={readinessMap} />
+      <MattersTable matters={matters} clientsMap={map} readinessMap={readinessMap} membersMap={membersMap} />
     </main>
   );
 }

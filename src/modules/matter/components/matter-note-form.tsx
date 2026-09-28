@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { createMatterNoteAction } from "../actions/matter-notes";
 
 export function MatterNoteForm({ matterId }: { matterId: string }) {
@@ -10,11 +11,10 @@ export function MatterNoteForm({ matterId }: { matterId: string }) {
     <form action={formAction} className="space-y-2">
       <input type="hidden" name="matterId" value={matterId} />
       <label htmlFor={`note-new-${matterId}`} className="text-sm font-medium">Add note</label>
-      <textarea
+      <Textarea
         id={`note-new-${matterId}`}
         name="content"
         placeholder="Add a note..."
-        className="w-full rounded-md border px-3 py-2 text-sm"
         rows={3}
         maxLength={5000}
         aria-describedby={`note-new-${matterId}-error`}

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { TableWrapper, Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Matter } from "../types/matter-types";
 import type { Client } from "@/modules/client/types/client-types";
 
@@ -7,35 +9,40 @@ export function MattersTable({
   matters,
   clientsMap,
   readinessMap,
+  membersMap,
 }: {
   matters: Matter[];
   clientsMap: Map<string, Client>;
   readinessMap?: Map<string, { requiredCount: number; verifiedCount: number }>;
+  membersMap?: Map<string, string>;
 }) {
   if (matters.length === 0)
     return (
-      <div className="rounded-md border p-6 text-center">
-        <p className="text-sm text-muted-foreground">No matters yet. Create your first matter.</p>
-        <Link href="/app/matters/new" className="mt-3 inline-flex rounded-md border px-3 py-1 text-sm">
-          New matter
-        </Link>
-      </div>
+      <EmptyState
+        title="No matters yet"
+        description="Create your first matter to start tracking."
+        action={
+          <Link href="/app/matters/new" className="inline-flex rounded-md border px-3 py-1 text-sm">
+            New matter
+          </Link>
+        }
+      />
     );
   return (
-    <div className="overflow-x-auto rounded-md border">
-      <table className="w-full min-w-[720px] text-sm">
-        <thead className="bg-muted/50 text-left">
-          <tr>
-            <th className="p-3">Title</th>
-            <th className="p-3">Client</th>
-            <th className="p-3">Type</th>
-            <th className="p-3">Status</th>
-            <th className="p-3">Readiness</th>
-            <th className="p-3">Assigned</th>
-            <th className="p-3">Deadline</th>
-          </tr>
-        </thead>
-        <tbody>
+    <TableWrapper>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Client</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Readiness</TableHead>
+            <TableHead>Assigned</TableHead>
+            <TableHead>Deadline</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {matters.map((m) => {
             const r = readinessMap?.get(m.id);
             let readiness: string = "—";
@@ -46,18 +53,18 @@ export function MattersTable({
               else readiness = `Required: ${r.verifiedCount}/${r.requiredCount}`;
             }
             return (
-              <tr key={m.id} className="border-t">
-                <td className="p-3">
+              <TableRow key={m.id}>
+                <TableCell>
                   <Link href={`/app/matters/${m.id}`} className="underline">
                     {m.title}
                   </Link>
-                </td>
-                <td className="p-3">{clientsMap.get(m.client_id)?.name ?? m.client_id.slice(0, 8)}</td>
-                <td className="p-3">{m.matter_type}</td>
-                <td className="p-3">
+                </TableCell>
+                <TableCell>{clientsMap.get(m.client_id)?.name ?? m.client_id.slice(0, 8)}</TableCell>
+                <TableCell>{m.matter_type}</TableCell>
+                <TableCell>
                   <Badge>{m.status}</Badge>
-                </td>
-                <td className="p-3 text-xs">
+                </TableCell>
+                <TableCell className="text-xs">
                   {readiness === "—" ? (
                     <span className="text-muted-foreground">—</span>
                   ) : readiness.startsWith("Ready") ? (
@@ -65,14 +72,43 @@ export function MattersTable({
                   ) : (
                     <Badge variant="outline">{readiness}</Badge>
                   )}
-                </td>
-                <td className="p-3 font-mono text-xs">{m.assigned_to ? m.assigned_to.slice(0, 8) : "—"}</td>
-                <td className="p-3">{m.deadline ?? "—"}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-sm">{m.assigned_to ? (membersMap?.get(m.assigned_to) ?? m.assigned_to.slice(0, 8)) : "—"}</TableCell>
+                <TableCell>
+                  {m.deadline ? (
+                    <span>
+                      {m.deadline}{" "}
+                      <span className={`text-xs font-medium ${(() => {
+                        const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+                        const d = new Date(m.deadline! + "T00:00:00");
+                        const t = new Date(today + "T00:00:00");
+                        const diff = Math.round((d.getTime() - t.getTime()) / 86400000);
+                        if (diff < 0) return "text-red-600";
+                        if (diff === 0) return "text-amber-600";
+                        if (diff <= 7) return "text-amber-600";
+                        return "text-muted-foreground";
+                      })()}`}>
+                        {(() => {
+                          const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+                          const d = new Date(m.deadline! + "T00:00:00");
+                          const t = new Date(today + "T00:00:00");
+                          const diff = Math.round((d.getTime() - t.getTime()) / 86400000);
+                          if (diff < 0) return `OVERDUE · ${Math.abs(diff)} days late`;
+                          if (diff === 0) return "DUE TODAY";
+                          if (diff <= 7) return `DUE IN ${diff} DAYS`;
+                          return "";
+                        })()}
+                      </span>
+                    </span>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
+              </TableRow>
             );
           })}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableWrapper>
   );
 }
