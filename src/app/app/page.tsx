@@ -9,6 +9,7 @@ import { SummaryCards } from "@/modules/dashboard/components/summary-cards";
 import { getAttentionNotices } from "@/modules/dashboard/services/get-attention-notices";
 import { AttentionList } from "@/modules/dashboard/components/attention-list";
 import { getRecentActivity } from "@/modules/dashboard/services/get-recent-activity";
+import { getMatterDashboardSummary } from "@/modules/matter/services/get-matter-dashboard-summary";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,7 @@ export default async function AppPage() {
   const attention = await getAttentionNotices(8);
   const recent = await getRecentActivity(8);
   const hasNotices = summary.open > 0 || summary.overdue > 0 || summary.dueSoon > 0;
+  const matterSummary = await getMatterDashboardSummary();
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-6">
@@ -37,6 +39,29 @@ export default async function AppPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold">Overview</h2>
         <SummaryCards summary={summary} />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">MatterVault</h2>
+        <div className="grid grid-cols-2 gap-3 text-sm md:grid-cols-4">
+          <div className="rounded-md border p-3">
+            <p className="text-muted-foreground">Open matters</p>
+            <p className="text-xl font-semibold">{matterSummary.openMatters}</p>
+          </div>
+          <div className="rounded-md border p-3">
+            <p className="text-muted-foreground">Awaiting documents</p>
+            <p className="text-xl font-semibold">{matterSummary.awaitingDocuments}</p>
+          </div>
+          <div className="rounded-md border p-3">
+            <p className="text-muted-foreground">Ready</p>
+            <p className="text-xl font-semibold">{matterSummary.readyMatters}</p>
+          </div>
+          <div className="rounded-md border p-3">
+            <p className="text-muted-foreground">Overdue</p>
+            <p className="text-xl font-semibold">{matterSummary.overdueMatters}</p>
+          </div>
+        </div>
+        <Link href="/app/matters" className="inline-flex rounded-md border px-3 py-1 text-sm">View matters</Link>
       </section>
 
       <section className="space-y-3">

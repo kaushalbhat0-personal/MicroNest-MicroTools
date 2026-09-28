@@ -1,0 +1,21 @@
+import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
+import { MatterForm } from "@/modules/matter/components/matter-form";
+import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
+import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
+
+export const dynamic = "force-dynamic";
+
+export default async function NewMatterPage() {
+  const clients = await listClientsForCurrentFirm(true);
+  const { firm } = await getCurrentFirmForSession();
+  const supabase = await createServerSupabaseClient();
+  const members = firm ? await listMembersByFirm(supabase, firm.id) : [];
+
+  return (
+    <main className="mx-auto max-w-2xl space-y-6 p-6">
+      <h1 className="text-2xl font-semibold">New matter</h1>
+      <MatterForm clients={clients} members={members} mode="create" />
+    </main>
+  );
+}
