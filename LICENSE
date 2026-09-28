@@ -1,52 +1,32 @@
-Proprietary License — MicroNest MicroTools
-
 Copyright (c) 2026 Kaushal Bhat. All rights reserved.
 
-This repository contains the proprietary source code for MicroNest MicroTools
-(the "Software"). All rights are reserved by the copyright holder.
+MICRONEST MICROTOOLS — PROPRIETARY SOFTWARE LICENSE
 
-No license is granted, expressly or impliedly, to any person obtaining a
-copy of this Software via public GitHub availability or otherwise.
+This repository and all source code, documentation, assets, designs,
+configuration, and other materials contained herein are proprietary
+intellectual property of Kaushal Bhat ("Owner"), unless otherwise
+stated.
 
-Restrictions
-------------
-Without prior written permission from the copyright holder, you may not:
+No permission is granted to any person or entity to:
 
-  - copy, reproduce, or duplicate the Software, in whole or in part;
-  - redistribute, publish, or share the Software;
-  - modify, adapt, or translate the Software;
-  - create derivative works based on the Software;
-  - deploy, host, or run the Software, including for internal or external use;
-  - use the Software for commercial purposes;
-  - incorporate the Software, in whole or in part, into any other product,
-    service, or codebase;
-  - sublicense, assign, or transfer any rights in the Software.
+- copy, reproduce, or redistribute this software;
+- use this software or any substantial portion of its source code;
+- modify, adapt, or create derivative works;
+- publish, sublicense, sell, rent, lease, or otherwise distribute;
+- deploy or operate the software or any substantial portion of it;
+- use the source code for commercial or non-commercial projects;
+- incorporate the source code into another product or service;
 
-Public Availability
--------------------
-The fact that this repository may be publicly viewable on GitHub does not
-constitute a grant of any license or intellectual-property rights. No
-license is granted by estoppel, implication, or otherwise.
+without prior written permission from the Owner.
 
-Ownership
----------
-The Software and all intellectual-property rights therein remain the
-exclusive property of Kaushal Bhat.
+The public availability of this repository does not constitute a grant
+of any copyright, patent, trademark, trade secret, or other
+intellectual property rights.
 
-Third-Party Dependencies
-------------------------
-Third-party libraries, frameworks, and packages referenced or included via
-package managers (including but not limited to dependencies listed in
-package.json and pnpm-lock.yaml) remain subject to their respective
-licenses. This license applies only to the original MicroNest MicroTools
-source code and not to third-party dependencies.
+Third-party dependencies and assets remain subject to their respective
+licenses.
 
-No Warranty
------------
-This Software is provided without warranty of any kind, express or implied.
+For licensing or commercial use inquiries, contact the repository owner.
 
-Governing Notice
-----------------
-This file constitutes the sole license notice for the MicroNest MicroTools
-repository. If no other license file is present, this proprietary
-all-rights-reserved notice governs.
+THE SOFTWARE AND SOURCE CODE ARE PROVIDED FOR VIEWING AND EVALUATION
+ONLY, WITHOUT ANY EXPRESS OR IMPLIED LICENSE OR WARRANTY.

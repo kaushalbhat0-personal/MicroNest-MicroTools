@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("root renders MicroNest homepage", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "MicroNest MicroTools" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /small tools for the work that matters/i })).toBeVisible();
   await expect(page.getByText("Browse by Profession")).toBeVisible();
 });
 
