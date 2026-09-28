@@ -1,0 +1,9 @@
+import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
+
+export async function getSessionUser() {
+  const supabase = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+}
