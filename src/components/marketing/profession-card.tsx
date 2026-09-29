@@ -4,7 +4,7 @@ import type { Profession } from "@/content/microtools";
 
 export function ProfessionCard({ profession }: { profession: Profession }) {
   return (
-    <Link href={`/profession/${profession.slug}`} className="rounded-md border p-6 hover:bg-accent">
+    <Link href={`/profession/${profession.slug}`} className="mn-card rounded-md border p-6 hover:bg-accent">
       <h3 className="text-lg font-semibold">{profession.name}</h3>
       <p className="mt-2 text-sm text-muted-foreground">{profession.description}</p>
       <div className="mt-3 flex items-center gap-2">

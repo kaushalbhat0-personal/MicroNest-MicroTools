@@ -31,3 +31,61 @@ body {
     linear-gradient(to bottom, color-mix(in oklab, var(--color-border) 15%, transparent) 1px, transparent 1px);
   background-size: 40px 40px;
 }
+
+/* MicroNest motion — quiet, CSS-first, prefers-reduced-motion safe */
+@keyframes mn-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mn-reveal {
+  animation: mn-reveal 500ms ease-out both;
+}
+
+.mn-section {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.mn-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mn-card {
+  transition: background-color 200ms ease-out, transform 200ms ease-out;
+}
+
+.mn-card:hover {
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mn-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .mn-section {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .mn-section.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .mn-card:hover {
+    transform: none !important;
+  }
+}
