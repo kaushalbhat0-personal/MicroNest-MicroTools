@@ -60,11 +60,7 @@ body {
 }
 
 .mn-card {
-  transition: background-color 200ms ease-out, transform 200ms ease-out;
-}
-
-.mn-card:hover {
-  transform: translateY(-1px);
+  transition: background-color 200ms ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -85,7 +81,7 @@ body {
     transform: none !important;
   }
 
-  .mn-card:hover {
-    transform: none !important;
+  .mn-card {
+    transition: none !important;
   }
 }
