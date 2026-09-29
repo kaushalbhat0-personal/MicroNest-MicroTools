@@ -27,6 +27,16 @@ const noticeflow: Tool = {
   appHref: "/app",
 };
 
+const mattervault: Tool = {
+  slug: "mattervault",
+  name: "MatterVault",
+  description: "Client document collection and matter file organization for Indian litigators — from checklist to ready file, without spreadsheets.",
+  profession: "lawyers",
+  status: "available",
+  href: "/tools/mattervault",
+  appHref: "/app/matters",
+};
+
 export const professions: Profession[] = [
   {
     slug: "chartered-accountants",
@@ -34,9 +44,15 @@ export const professions: Profession[] = [
     description: "Lightweight tools for Chartered Accountants to manage statutory workflows with clarity.",
     tools: [noticeflow],
   },
+  {
+    slug: "lawyers",
+    name: "Lawyers",
+    description: "Focused tools for litigators and law firms to organize client document collection and keep matter files ready to file.",
+    tools: [mattervault],
+  },
 ];
 
-export const tools: Tool[] = [noticeflow];
+export const tools: Tool[] = [noticeflow, mattervault];
 
 export function getProfession(slug: string): Profession | undefined {
   return professions.find((p) => p.slug === slug);

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     default: "MicroNest MicroTools — Lightweight tools for professionals",
     template: "%s — MicroNest MicroTools",
   },
-  description: "MicroNest MicroTools — small, focused software tools for professionals. Chartered Accountants: NoticeFlow and future microtools.",
+  description: "MicroNest MicroTools — small, focused software tools for professionals. For Chartered Accountants (NoticeFlow) and Lawyers (MatterVault).",
   openGraph: {
     title: "MicroNest MicroTools",
     description: "Small, focused software tools for professionals.",

@@ -44,7 +44,7 @@ export default function HomePage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-semibold">Featured MicroTool</h2>
+          <h2 className="text-2xl font-semibold">Featured MicroTools</h2>
           <div className={tools.length === 1 ? "grid gap-4 max-w-4xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {tools.map((t) => (
               <Link key={t.slug} href={t.href} className="overflow-hidden rounded-md border hover:bg-accent">
@@ -55,19 +55,35 @@ export default function HomePage() {
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground">{t.description}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-1.5 border-t bg-muted/20 px-6 py-3 text-xs">
-                  <span className="rounded-full border bg-background px-2 py-0.5">Receipt</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-background px-2 py-0.5">Review</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-background px-2 py-0.5">Draft</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-background px-2 py-0.5">Submit</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-background px-2 py-0.5">Follow-up</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-background px-2 py-0.5">Close</span>
-                </div>
+                {t.slug === "noticeflow" ? (
+                  <div className="flex flex-wrap items-center gap-1.5 border-t bg-muted/20 px-6 py-3 text-xs">
+                    <span className="rounded-full border bg-background px-2 py-0.5">Receipt</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Review</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Draft</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Submit</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Follow-up</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Close</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap items-center gap-1.5 border-t bg-muted/20 px-6 py-3 text-xs">
+                    <span className="rounded-full border bg-background px-2 py-0.5">Create</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Checklist</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Upload</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Verify</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Ready</span>
+                    <span className="text-muted-foreground" aria-hidden="true">→</span>
+                    <span className="rounded-full border bg-background px-2 py-0.5">Archive</span>
+                  </div>
+                )}
               </Link>
             ))}
           </div>
@@ -93,7 +109,7 @@ export default function HomePage() {
 
         <footer className="flex flex-col items-center gap-2 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <div className="text-center sm:text-left">
-            <p>MicroNest MicroTools — Chartered Accountants • NoticeFlow and future microtools</p>
+            <p>MicroNest MicroTools — Chartered Accountants • NoticeFlow • Lawyers • MatterVault</p>
             <p className="text-xs">© 2026 Kaushal Bhat. All rights reserved.</p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
@@ -102,6 +118,12 @@ export default function HomePage() {
             </Link>
             <Link href="/tools/noticeflow" className="underline">
               NoticeFlow
+            </Link>
+            <Link href="/profession/lawyers" className="underline">
+              Lawyers
+            </Link>
+            <Link href="/tools/mattervault" className="underline">
+              MatterVault
             </Link>
             <Link href="/app" className="underline">
               Launch App

@@ -5,6 +5,8 @@ const links = [
   { href: "/", label: "Home", exact: true },
   { href: "/profession/chartered-accountants", label: "Chartered Accountants" },
   { href: "/tools/noticeflow", label: "NoticeFlow" },
+  { href: "/profession/lawyers", label: "Lawyers" },
+  { href: "/tools/mattervault", label: "MatterVault" },
 ];
 
 export function SiteNav() {
