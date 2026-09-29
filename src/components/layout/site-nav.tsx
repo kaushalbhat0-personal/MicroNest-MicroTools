@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { professions } from "@/content/microtools";
 import { NavShell } from "./nav-shell";
 
 const links = [
   { href: "/", label: "Home", exact: true },
-  { href: "/profession/chartered-accountants", label: "Chartered Accountants" },
-  { href: "/tools/noticeflow", label: "NoticeFlow" },
-  { href: "/profession/lawyers", label: "Lawyers" },
-  { href: "/tools/mattervault", label: "MatterVault" },
+  ...professions.map((p) => ({
+    href: `/profession/${p.slug}`,
+    label: p.name,
+    children: p.tools.map((t) => ({ href: t.href, label: t.name })),
+  })),
 ];
 
 export function SiteNav() {

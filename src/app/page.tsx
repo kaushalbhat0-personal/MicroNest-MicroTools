@@ -51,7 +51,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Featured MicroTools</h2>
           <div className={tools.length === 1 ? "grid gap-4 max-w-4xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {tools.map((t, i) => (
-              <Link key={t.slug} href={t.href} className="mn-card overflow-hidden rounded-md border hover:bg-accent">
+              <Link key={t.slug} href={t.href} className="mn-card overflow-hidden rounded-md border bg-background hover:bg-accent/50 hover:border-foreground/20">
                 <Reveal delayMs={i * 60}>
                   <div className="p-6">
                     <div className="flex items-center justify-between gap-2">
