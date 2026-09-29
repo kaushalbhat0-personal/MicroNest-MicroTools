@@ -43,7 +43,7 @@ export function NavShell({ brand, links, cta }: NavShellProps) {
 
   return (
     <header className="sticky top-0 z-20 border-b bg-background">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6 lg:px-8">
         {brand}
         <button
           type="button"
@@ -67,7 +67,7 @@ export function NavShell({ brand, links, cta }: NavShellProps) {
                   href={l.href}
                   aria-current={active ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${active ? "bg-foreground text-background" : "hover:bg-accent"}`}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${active ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"}`}
                 >
                   {l.label}
                 </Link>
@@ -98,7 +98,7 @@ export function NavShell({ brand, links, cta }: NavShellProps) {
                       setDesktopOpen(null);
                     }}
                     onFocus={() => setDesktopOpen(l.href)}
-                    className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${active ? "bg-foreground text-background" : "hover:bg-accent"}`}
+                    className={`rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${active ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"}`}
                   >
                     {l.label}
                   </Link>
@@ -137,7 +137,7 @@ export function NavShell({ brand, links, cta }: NavShellProps) {
                             setDesktopOpen(null);
                             setMobileOpen({});
                           }}
-                          className={`block rounded-md px-3 py-2 text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${childActive ? "bg-foreground text-background" : "hover:bg-accent"}`}
+                          className={`block rounded-md px-3 py-2 text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 ${childActive ? "bg-primary text-primary-foreground" : "hover:bg-accent hover:text-accent-foreground"}`}
                         >
                           {child.label}
                         </Link>

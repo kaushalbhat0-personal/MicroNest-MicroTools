@@ -5,7 +5,7 @@ import { Reveal } from "@/components/marketing/reveal";
 
 export function ProfessionCard({ profession, delayMs }: { profession: Profession; delayMs?: number }) {
   return (
-    <Link href={`/profession/${profession.slug}`} className="mn-card rounded-md border bg-background hover:bg-accent/50 hover:border-foreground/20">
+    <Link href={`/profession/${profession.slug}`} className="mn-card rounded-md border bg-background hover:bg-muted hover:border-foreground/30">
       <Reveal delayMs={delayMs} className="p-6">
         <h3 className="text-lg font-semibold">{profession.name}</h3>
         <p className="mt-2 text-sm text-muted-foreground">{profession.description}</p>

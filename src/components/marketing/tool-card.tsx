@@ -6,7 +6,7 @@ import type { Tool } from "@/content/microtools";
 export function ToolCard({ tool }: { tool: Tool }) {
   const profession = getProfession(tool.profession);
   return (
-    <Link href={tool.href} className="mn-card rounded-md border bg-background p-6 hover:bg-accent/50 hover:border-foreground/20">
+    <Link href={tool.href} className="mn-card rounded-md border bg-background p-6 hover:bg-muted hover:border-foreground/30">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-lg font-semibold">{tool.name}</h3>
         <Badge variant={tool.status === "available" ? "default" : "outline"}>{tool.status === "available" ? "Available" : "Coming soon"}</Badge>
