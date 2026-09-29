@@ -36,7 +36,7 @@ export default function HomePage() {
 
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Browse by Profession</h2>
-          <div className={professions.length === 1 ? "grid gap-4 max-w-md mx-auto" : "grid gap-4 md:grid-cols-2"}>
+          <div className={professions.length === 1 ? "grid gap-4 max-w-3xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {professions.map((p) => (
               <ProfessionCard key={p.slug} profession={p} />
             ))}
@@ -45,7 +45,7 @@ export default function HomePage() {
 
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Featured MicroTool</h2>
-          <div className={tools.length === 1 ? "grid gap-4 max-w-md mx-auto" : "grid gap-4 md:grid-cols-2"}>
+          <div className={tools.length === 1 ? "grid gap-4 max-w-4xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {tools.map((t) => (
               <div key={t.slug} className="space-y-0">
                 <ToolCard tool={t} />

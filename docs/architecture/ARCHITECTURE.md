@@ -31,7 +31,7 @@ User → Vercel Hobby (Next.js 16 App Router, proxy.ts) → Supabase Auth/Postgr
 | `src/modules/{firm,client,notice,document,activity}/` *(Phase 1+)* | **One domain** — its services, repos, schemas, permissions, components | Other domain's code |
 | `supabase/` | `config.toml` + `migrations/` | Business logic |
 | `e2e/` | Playwright smoke (Phase 0) → lifecycle/security Phase 5 | Unit helpers |
-| `docs/` | `ARCHITECTURE.md` (this file), `architecture/system-design.md` | Code |
+| `docs/` | `architecture/ARCHITECTURE.md` (this file), `architecture/system-design.md` | Code |
 
 If you cannot tell where a file belongs from this table, the name/location is wrong.
 
