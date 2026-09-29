@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { professions, tools } from "@/content/microtools";
 import { ProfessionCard } from "@/components/marketing/profession-card";
-import { ToolCard } from "@/components/marketing/tool-card";
 import { SiteNav } from "@/components/layout/site-nav";
+import { Badge } from "@/components/ui/badge";
 
 export default function HomePage() {
   return (
@@ -24,14 +24,14 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="flex flex-col items-center gap-2 py-4 sm:flex-row sm:justify-center" aria-label="How MicroNest works">
-          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>Chartered Accountants</span></div>
+        <section className="flex flex-col items-center gap-3 py-4 sm:flex-row sm:justify-center sm:gap-4" aria-label="How MicroNest works">
+          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>Chartered Accountants</span></div>
           <span className="hidden text-muted-foreground sm:inline" aria-hidden="true">→</span>
           <span className="text-muted-foreground sm:hidden" aria-hidden="true">↓</span>
-          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>GST/Income-tax notice</span></div>
+          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>GST/Income-tax notice</span></div>
           <span className="hidden text-muted-foreground sm:inline" aria-hidden="true">→</span>
           <span className="text-muted-foreground sm:hidden" aria-hidden="true">↓</span>
-          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>NoticeFlow</span></div>
+          <div className="flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm"><span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" /><span>NoticeFlow</span></div>
         </section>
 
         <section className="space-y-4">
@@ -47,22 +47,28 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Featured MicroTool</h2>
           <div className={tools.length === 1 ? "grid gap-4 max-w-4xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {tools.map((t) => (
-              <div key={t.slug} className="space-y-0">
-                <ToolCard tool={t} />
-                <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t pt-3 text-xs">
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Receipt</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Review</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Draft</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Submit</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Follow-up</span>
-                  <span className="text-muted-foreground" aria-hidden="true">→</span>
-                  <span className="rounded-full border bg-muted/30 px-2 py-0.5">Close</span>
+              <Link key={t.slug} href={t.href} className="overflow-hidden rounded-md border hover:bg-accent">
+                <div className="p-6">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-lg font-semibold">{t.name}</h3>
+                    <Badge variant={t.status === "available" ? "default" : "outline"}>{t.status === "available" ? "Available" : "Coming soon"}</Badge>
+                  </div>
+                  <p className="mt-2 text-sm text-muted-foreground">{t.description}</p>
                 </div>
-              </div>
+                <div className="flex flex-wrap items-center gap-1.5 border-t bg-muted/20 px-6 py-3 text-xs">
+                  <span className="rounded-full border bg-background px-2 py-0.5">Receipt</span>
+                  <span className="text-muted-foreground" aria-hidden="true">→</span>
+                  <span className="rounded-full border bg-background px-2 py-0.5">Review</span>
+                  <span className="text-muted-foreground" aria-hidden="true">→</span>
+                  <span className="rounded-full border bg-background px-2 py-0.5">Draft</span>
+                  <span className="text-muted-foreground" aria-hidden="true">→</span>
+                  <span className="rounded-full border bg-background px-2 py-0.5">Submit</span>
+                  <span className="text-muted-foreground" aria-hidden="true">→</span>
+                  <span className="rounded-full border bg-background px-2 py-0.5">Follow-up</span>
+                  <span className="text-muted-foreground" aria-hidden="true">→</span>
+                  <span className="rounded-full border bg-background px-2 py-0.5">Close</span>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
