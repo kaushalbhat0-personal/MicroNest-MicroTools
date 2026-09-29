@@ -1,12 +1,16 @@
+import { redirect } from "next/navigation";
 import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
 import { MatterForm } from "@/modules/matter/components/matter-form";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewMatterPage() {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "mattervault"))) redirect("/app");
   const clients = await listClientsForCurrentFirm(true);
   const { firm } = await getCurrentFirmForSession();
   const supabase = await createServerSupabaseClient();

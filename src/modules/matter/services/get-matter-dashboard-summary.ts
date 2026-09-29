@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 function todayInKolkata(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -8,6 +9,7 @@ function todayInKolkata(): string {
 export async function getMatterDashboardSummary() {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) return { openMatters: 0, readyMatters: 0, awaitingDocuments: 0, overdueMatters: 0 };
+  if (!(await isSubscribed(firm.id, "mattervault"))) return { openMatters: 0, readyMatters: 0, awaitingDocuments: 0, overdueMatters: 0 };
 
   const supabase = await createServerSupabaseClient();
   const today = todayInKolkata();

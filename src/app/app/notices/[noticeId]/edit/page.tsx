@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getNoticeForCurrentFirm } from "@/modules/notice/services/get-notice";
 import { updateNoticeAction } from "@/modules/notice/actions/update-notice";
 import { NoticeForm } from "@/modules/notice/components/notice-form";
@@ -6,12 +6,21 @@ import { listClientsForCurrentFirm } from "@/modules/client/services/list-client
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditNoticePage({ params }: { params: Promise<{ noticeId: string }> }) {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "noticeflow"))) redirect("/app");
   const { noticeId } = await params;
-  const notice = await getNoticeForCurrentFirm(noticeId);
+  let notice;
+  try {
+    notice = await getNoticeForCurrentFirm(noticeId);
+  } catch (e) {
+    if (e instanceof Error && e.name === "EntitlementError") redirect("/app");
+    throw e;
+  }
   if (!notice) notFound();
 
   const clients = await listClientsForCurrentFirm(true);

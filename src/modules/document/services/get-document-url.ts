@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { createServiceSupabaseClient } from "@/infrastructure/database/supabase-service";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import { getDocumentById } from "../repositories/document-repository";
 import { getNoticeById } from "@/modules/notice/repositories/notice-repository";
 
@@ -11,6 +12,13 @@ export async function getDocumentSignedUrlForCurrentFirm(documentId: string): Pr
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+
+  try {
+    await requireEntitlement(firm.id, "noticeflow");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
 
   const supabase = await createServerSupabaseClient();
   const doc = await getDocumentById(supabase, documentId);

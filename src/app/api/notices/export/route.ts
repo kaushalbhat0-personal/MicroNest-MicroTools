@@ -3,6 +3,7 @@ import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-fi
 import { parseNoticeFilters } from "@/modules/notice/schemas/notice-filter-schema";
 import { listNoticesFiltered } from "@/modules/notice/services/list-notices-filtered";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 function csvEscape(value: string | null | undefined): string {
   const s = value ?? "";
@@ -16,6 +17,9 @@ export async function GET(request: Request) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+  if (!(await isSubscribed(firm.id, "noticeflow"))) {
+    return NextResponse.json({ error: "Not subscribed to noticeflow" }, { status: 403 });
   }
 
   const url = new URL(request.url);

@@ -1,16 +1,25 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getMatterForCurrentFirm } from "@/modules/matter/services/get-matter";
 import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
 import { MatterForm } from "@/modules/matter/components/matter-form";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function EditMatterPage({ params }: { params: Promise<{ matterId: string }> }) {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "mattervault"))) redirect("/app");
   const { matterId } = await params;
-  const matter = await getMatterForCurrentFirm(matterId);
+  let matter;
+  try {
+    matter = await getMatterForCurrentFirm(matterId);
+  } catch (e) {
+    if (e instanceof Error && e.name === "EntitlementError") redirect("/app");
+    throw e;
+  }
   if (!matter) notFound();
   const clients = await listClientsForCurrentFirm(true);
   const { firm } = await getCurrentFirmForSession();

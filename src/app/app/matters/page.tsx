@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { MattersTable } from "@/modules/matter/components/matters-table";
 import { listMattersForCurrentFirm } from "@/modules/matter/services/list-matters";
 import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
@@ -7,6 +8,7 @@ import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-fi
 import { getMembershipRole } from "@/modules/firm/permissions/get-membership";
 import { canCreateMatter } from "@/modules/matter/permissions/matter-permissions";
 import { PageHeader } from "@/components/layout/page-header";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +17,20 @@ export default async function MattersPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "mattervault"))) redirect("/app");
   const params = await searchParams;
   const status = typeof params.status === "string" ? params.status : undefined;
   const allowed = ["open", "ready", "archived"] as const;
   const statusFilter = allowed.includes(status as never) ? (status as (typeof allowed)[number]) : undefined;
 
-  const matters = await listMattersForCurrentFirm(statusFilter);
+  let matters;
+  try {
+    matters = await listMattersForCurrentFirm(statusFilter);
+  } catch (e) {
+    if (e instanceof Error && e.name === "EntitlementError") redirect("/app");
+    throw e;
+  }
   const clients = await listClientsForCurrentFirm(true);
   const map = new Map<string, Client>(clients.map((c) => [c.id, c]));
   const { firm } = await getCurrentFirmForSession();

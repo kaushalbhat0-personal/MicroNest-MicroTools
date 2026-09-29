@@ -5,6 +5,7 @@ import { canEditNotice, canSetAssignedTo } from "../permissions/notice-permissio
 import { updateNoticeSchema } from "../schemas/notice-schema";
 import { getNoticeById, updateNoticeRow } from "../repositories/notice-repository";
 import { getClientById } from "@/modules/client/repositories/client-repository";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 
 export async function updateNoticeForCurrentFirm(raw: unknown) {
   const parsed = updateNoticeSchema.safeParse(raw);
@@ -14,6 +15,8 @@ export async function updateNoticeForCurrentFirm(raw: unknown) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+
+  await requireEntitlement(firm.id, "noticeflow");
 
   const supabase = await createServerSupabaseClient();
 

@@ -1,4 +1,6 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
+import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import { getNoticeById } from "../repositories/notice-repository";
 
 export async function transitionNoticeForCurrentFirm(args: {
@@ -11,6 +13,15 @@ export async function transitionNoticeForCurrentFirm(args: {
   // Verify notice belongs to caller's firm before RPC (IDOR early)
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
+
+  const { firm } = await getCurrentFirmForSession();
+  if (!firm) return { error: "No firm" };
+  try {
+    await requireEntitlement(firm.id, "noticeflow");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
 
   // Use RPC which atomically validates and transitions
   const { error } = await supabase.rpc("transition_notice", {

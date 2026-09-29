@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { NoticesTable } from "@/modules/notice/components/notices-table";
 import { NoticeFilters } from "@/modules/notice/components/notice-filters";
 import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
@@ -9,6 +10,7 @@ import { createServerSupabaseClient } from "@/infrastructure/database/supabase-s
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
 import type { Client } from "@/modules/client/types/client-types";
 import { PageHeader } from "@/components/layout/page-header";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,8 @@ function buildQuery(filters: Record<string, string | undefined>, overrides: Reco
 }
 
 export default async function NoticesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { firm: firmForGuard } = await getCurrentFirmForSession();
+  if (firmForGuard && !(await isSubscribed(firmForGuard.id, "noticeflow"))) redirect("/app");
   const params = await searchParams;
   const filters = parseNoticeFilters(params);
   const page = filters.page ?? 1;

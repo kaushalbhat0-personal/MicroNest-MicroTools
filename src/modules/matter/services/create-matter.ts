@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/infrastructure/database/supabase-s
 import { createServiceSupabaseClient } from "@/infrastructure/database/supabase-service";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { getMembershipRole } from "@/modules/firm/permissions/get-membership";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import { canCreateMatter } from "../permissions/matter-permissions";
 import { createMatterSchema } from "../schemas/matter-schema";
 import { getClientById } from "@/modules/client/repositories/client-repository";
@@ -19,6 +20,13 @@ export async function createMatterForCurrentFirm(raw: unknown) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
 
   const role = await getMembershipRole(firm.id);
   if (!canCreateMatter(role as never)) return { error: "Not allowed" };

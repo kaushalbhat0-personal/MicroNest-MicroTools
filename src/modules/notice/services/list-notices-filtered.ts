@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import type { Notice } from "../types/notice-types";
 import type { NoticeFilterInput } from "../schemas/notice-filter-schema";
 
@@ -18,6 +19,7 @@ export async function listNoticesFiltered(filters: NoticeFilterInput): Promise<N
   // Complete filtered set — for CSV export and non-paginated consumers
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) return [];
+  await requireEntitlement(firm.id, "noticeflow");
   const supabase = await createServerSupabaseClient();
   let query = supabase.from("notices").select("*").eq("firm_id", firm.id);
   if (filters.status) query = query.eq("status", filters.status);
@@ -54,6 +56,7 @@ export async function listNoticesFilteredPaginated(
 ): Promise<{ notices: Notice[]; total: number; page: number; pageSize: number; totalPages: number }> {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) return { notices: [], total: 0, page: 1, pageSize: PAGE_SIZE, totalPages: 0 };
+  await requireEntitlement(firm.id, "noticeflow");
 
   const supabase = await createServerSupabaseClient();
   const page = filters.page && filters.page >= 1 ? filters.page : 1;

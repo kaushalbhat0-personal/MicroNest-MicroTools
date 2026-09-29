@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { createServiceSupabaseClient } from "@/infrastructure/database/supabase-service";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import { getMatterDocumentForFirm } from "../repositories/matter-document-repository";
 import { getMatterByIdForFirm } from "../repositories/matter-repository";
 
@@ -9,6 +10,12 @@ const BUCKET = "matter-documents";
 export async function getMatterDocumentUrlForCurrentFirm(documentId: string) {
   const { firm } = await getCurrentFirmForSession();
   if (!firm) return { error: "Not authenticated" };
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
   const supabase = await createServerSupabaseClient();
   const doc = await getMatterDocumentForFirm(supabase, documentId, firm.id);
   if (!doc) return { error: "Document not found in your firm" };

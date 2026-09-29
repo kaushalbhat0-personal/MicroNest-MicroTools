@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 function todayInKolkata(): string {
   // en-CA gives YYYY-MM-DD
@@ -15,6 +16,7 @@ function addDays(dateStr: string, days: number): string {
 export async function getDashboardSummary() {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) return { open: 0, overdue: 0, dueSoon: 0, myNotices: 0 };
+  if (!(await isSubscribed(firm.id, "noticeflow"))) return { open: 0, overdue: 0, dueSoon: 0, myNotices: 0 };
 
   const supabase = await createServerSupabaseClient();
   const today = todayInKolkata();

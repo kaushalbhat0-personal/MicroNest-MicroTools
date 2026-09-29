@@ -1,9 +1,11 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export async function getRecentActivity(limit = 8) {
   const { firm } = await getCurrentFirmForSession();
   if (!firm) return [];
+  if (!(await isSubscribed(firm.id, "noticeflow"))) return [];
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("activity_log")

@@ -1,13 +1,17 @@
+import { redirect } from "next/navigation";
 import { listClientsForCurrentFirm } from "@/modules/client/services/list-clients";
 import { createNoticeAction } from "@/modules/notice/actions/create-notice";
 import { NoticeForm } from "@/modules/notice/components/notice-form";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { listMembersByFirm } from "@/modules/firm/repositories/firm-repository";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewNoticePage() {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "noticeflow"))) redirect("/app");
   const clients = await listClientsForCurrentFirm();
   const { firm } = await getCurrentFirmForSession();
   const supabase = await createServerSupabaseClient();

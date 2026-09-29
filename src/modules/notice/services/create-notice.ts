@@ -5,6 +5,7 @@ import { canCreateNotice, canSetAssignedTo } from "../permissions/notice-permiss
 import { createNoticeSchema } from "../schemas/notice-schema";
 import { createNoticeRow } from "../repositories/notice-repository";
 import { getClientById } from "@/modules/client/repositories/client-repository";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 
 export async function createNoticeForCurrentFirm(raw: unknown) {
   const parsed = createNoticeSchema.safeParse(raw);
@@ -14,6 +15,8 @@ export async function createNoticeForCurrentFirm(raw: unknown) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+
+  await requireEntitlement(firm.id, "noticeflow");
 
   const role = await getMembershipRole(firm.id);
   if (!canCreateNotice(role as never)) return { error: "Not allowed" };

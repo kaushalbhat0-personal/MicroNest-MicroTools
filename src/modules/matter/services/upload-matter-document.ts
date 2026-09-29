@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/infrastructure/database/supabase-s
 import { createServiceSupabaseClient } from "@/infrastructure/database/supabase-service";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { getMembershipRole } from "@/modules/firm/permissions/get-membership";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import { canUploadToMatter } from "../permissions/matter-permissions";
 import { buildMatterStoragePath, sanitizeFilename } from "../schemas/matter-document-schema";
 import { MATTER_ALLOWED_MIME_TYPES, MATTER_MAX_FILE_SIZE } from "../types/matter-document-types";
@@ -17,6 +18,13 @@ export async function uploadMatterDocumentForCurrentFirm(args: {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
 
   const supabase = await createServerSupabaseClient();
   const matter = await getMatterByIdForFirm(supabase, args.matterId, firm.id);

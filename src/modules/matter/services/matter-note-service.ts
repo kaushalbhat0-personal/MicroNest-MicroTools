@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/infrastructure/database/supabase-s
 import { createServiceSupabaseClient } from "@/infrastructure/database/supabase-service";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
 import { getMembershipRole } from "@/modules/firm/permissions/get-membership";
+import { requireEntitlement } from "@/modules/billing/services/entitlements";
 import {
   canCreateMatterNote,
   canDeleteMatterNote,
@@ -17,6 +18,12 @@ export async function createMatterNoteForCurrentFirm(raw: unknown) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
   const supabase = await createServerSupabaseClient();
   const matter = await getMatterByIdForFirm(supabase, parsed.data.matterId, firm.id);
   if (!matter) return { error: "Matter not found in your firm" };
@@ -53,6 +60,12 @@ export async function updateMatterNoteForCurrentFirm(raw: unknown) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
   const supabase = await createServerSupabaseClient();
   const note = await getMatterNoteById(supabase, parsed.data.noteId);
   if (!note || note.firm_id !== firm.id) return { error: "Note not found in your firm" };
@@ -76,6 +89,12 @@ export async function deleteMatterNoteForCurrentFirm(noteId: string) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user) return { error: "Not authenticated" };
   if (!firm) return { error: "No firm" };
+  try {
+    await requireEntitlement(firm.id, "mattervault");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Not subscribed";
+    return { error: msg };
+  }
   const supabase = await createServerSupabaseClient();
   const note = await getMatterNoteById(supabase, noteId);
   if (!note || note.firm_id !== firm.id) return { error: "Note not found in your firm" };

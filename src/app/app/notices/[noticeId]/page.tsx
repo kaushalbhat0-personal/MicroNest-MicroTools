@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getNoticeForCurrentFirm } from "@/modules/notice/services/get-notice";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getClientById } from "@/modules/client/repositories/client-repository";
@@ -17,12 +17,21 @@ import { listNotesByNotice } from "@/modules/note/repositories/note-repository";
 import { NotesList } from "@/modules/note/components/notes-list";
 import { NoteForm } from "@/modules/note/components/note-form";
 import { canDeleteDocument } from "@/modules/document/permissions/document-permissions";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ noticeId: string }> }) {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "noticeflow"))) redirect("/app");
   const { noticeId } = await params;
-  const notice = await getNoticeForCurrentFirm(noticeId);
+  let notice;
+  try {
+    notice = await getNoticeForCurrentFirm(noticeId);
+  } catch (e) {
+    if (e instanceof Error && e.name === "EntitlementError") redirect("/app");
+    throw e;
+  }
   if (!notice) notFound();
 
   const supabase = await createServerSupabaseClient();

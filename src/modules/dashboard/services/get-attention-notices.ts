@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getCurrentFirmForSession } from "@/modules/firm/services/get-current-firm";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 function todayInKolkata(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -15,6 +16,7 @@ const priorityRank: Record<string, number> = { urgent: 0, high: 1, medium: 2, lo
 export async function getAttentionNotices(limit = 10) {
   const { user, firm } = await getCurrentFirmForSession();
   if (!user || !firm) return [];
+  if (!(await isSubscribed(firm.id, "noticeflow"))) return [];
 
   const supabase = await createServerSupabaseClient();
   const today = todayInKolkata();

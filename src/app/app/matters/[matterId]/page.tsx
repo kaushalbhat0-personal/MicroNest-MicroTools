@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getMatterForCurrentFirm } from "@/modules/matter/services/get-matter";
 import { createServerSupabaseClient } from "@/infrastructure/database/supabase-server";
 import { getClientById } from "@/modules/client/repositories/client-repository";
@@ -27,12 +27,21 @@ import {
 import { canTransitionMatter } from "@/modules/matter/permissions/matter-status";
 import { ArchiveMatterButton } from "@/modules/matter/components/archive-matter-button";
 import { PageHeader } from "@/components/layout/page-header";
+import { isSubscribed } from "@/modules/billing/services/entitlements";
 
 export const dynamic = "force-dynamic";
 
 export default async function MatterDetailPage({ params }: { params: Promise<{ matterId: string }> }) {
+  const { firm: guardFirm } = await getCurrentFirmForSession();
+  if (guardFirm && !(await isSubscribed(guardFirm.id, "mattervault"))) redirect("/app");
   const { matterId } = await params;
-  const matter = await getMatterForCurrentFirm(matterId);
+  let matter;
+  try {
+    matter = await getMatterForCurrentFirm(matterId);
+  } catch (e) {
+    if (e instanceof Error && e.name === "EntitlementError") redirect("/app");
+    throw e;
+  }
   if (!matter) notFound();
 
   const supabase = await createServerSupabaseClient();
