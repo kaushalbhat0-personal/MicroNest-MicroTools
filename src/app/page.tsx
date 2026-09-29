@@ -42,9 +42,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Browse by Profession</h2>
           <div className={professions.length === 1 ? "grid gap-4 max-w-3xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {professions.map((p, i) => (
-              <Reveal key={p.slug} delayMs={i * 60}>
-                <ProfessionCard profession={p} />
-              </Reveal>
+              <ProfessionCard key={p.slug} profession={p} delayMs={i * 60} />
             ))}
           </div>
         </section>
@@ -53,8 +51,8 @@ export default function HomePage() {
           <h2 className="text-2xl font-semibold">Featured MicroTools</h2>
           <div className={tools.length === 1 ? "grid gap-4 max-w-4xl mx-auto" : "grid gap-4 md:grid-cols-2"}>
             {tools.map((t, i) => (
-              <Reveal key={t.slug} delayMs={i * 60}>
-                <Link href={t.href} className="mn-card overflow-hidden rounded-md border hover:bg-accent">
+              <Link key={t.slug} href={t.href} className="mn-card overflow-hidden rounded-md border hover:bg-accent">
+                <Reveal delayMs={i * 60}>
                   <div className="p-6">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="text-lg font-semibold">{t.name}</h3>
@@ -91,31 +89,33 @@ export default function HomePage() {
                       <span className="rounded-full border bg-background px-2 py-0.5">Archive</span>
                     </div>
                   )}
-                </Link>
-              </Reveal>
+                </Reveal>
+              </Link>
             ))}
           </div>
         </section>
 
-        <Reveal>
-          <section className="space-y-4">
-            <h2 className="text-2xl font-semibold">Why MicroTools</h2>
-            <div className="grid gap-6 border-t pt-6 md:grid-cols-3">
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium">Focused</h3>
-                <p className="text-sm leading-6 text-muted-foreground">One workflow, one tool — not platform bloat. Each MicroTool does a single statutory job from receipt to closure.</p>
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Why MicroTools</h2>
+          <div className="border-t pt-6">
+            <Reveal>
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Focused</h3>
+                  <p className="text-sm leading-6 text-muted-foreground">One workflow, one tool — not platform bloat. Each MicroTool does a single statutory job from receipt to closure.</p>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Professional</h3>
+                  <p className="text-sm leading-6 text-muted-foreground">Built around professional statutory workflows, not generic all-in-one software. Tenant-isolated, audit-trailed, deadline-aware.</p>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Workflow-first</h3>
+                  <p className="text-sm leading-6 text-muted-foreground">From receipt to review to closure, with the documents, notes, and activity needed to keep work organized — without spreadsheets.</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium">Professional</h3>
-                <p className="text-sm leading-6 text-muted-foreground">Built around professional statutory workflows, not generic all-in-one software. Tenant-isolated, audit-trailed, deadline-aware.</p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium">Workflow-first</h3>
-                <p className="text-sm leading-6 text-muted-foreground">From receipt to review to closure, with the documents, notes, and activity needed to keep work organized — without spreadsheets.</p>
-              </div>
-            </div>
-          </section>
-        </Reveal>
+            </Reveal>
+          </div>
+        </section>
 
         <footer className="flex flex-col items-center gap-2 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <div className="text-center sm:text-left">
